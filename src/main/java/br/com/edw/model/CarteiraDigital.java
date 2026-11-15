@@ -60,6 +60,7 @@ public class CarteiraDigital {
     }
 
     public static CarteiraDigital localizarPorQrCode(String qrCode) {
+
         if (qrCode == null || qrCode.isBlank()) {
             return null;
         }
@@ -97,5 +98,14 @@ public class CarteiraDigital {
     public BigDecimal atualizarSaldo(BigDecimal quantidade) {
         saldo = saldo.add(quantidade);
         return saldo;
+    }
+
+    public BigDecimal consultarSaldo() {
+        return saldo;
+    }
+
+    public Boolean possuiCreditosDisponiveis() {
+        return saldo != null
+                && saldo.compareTo(BigDecimal.ZERO) > 0;
     }
 }
