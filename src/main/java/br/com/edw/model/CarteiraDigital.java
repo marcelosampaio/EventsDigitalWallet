@@ -49,12 +49,53 @@ public class CarteiraDigital {
 
     public Boolean associarEvento(Integer eventoId) {
 
-        if (carteiraDigitalId == null || eventoId == null) {
+        if (carteiraDigitalId == null || eventoId == null
+                || Evento.localizarEvento(eventoId) == null) {
             return false;
         }
 
         this.eventoId = eventoId;
 
         return true;
+    }
+
+    public static CarteiraDigital localizarPorQrCode(String qrCode) {
+        if (qrCode == null || qrCode.isBlank()) {
+            return null;
+        }
+
+        return carteiras.stream()
+                .filter(carteira -> carteira.qrCode.equals(qrCode))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public Boolean validarQuantidadeCreditos(BigDecimal quantidade) {
+        return quantidade != null
+                && quantidade.compareTo(BigDecimal.ZERO) > 0;
+    }
+
+    public Boolean adicionarCreditos(BigDecimal quantidade) {
+
+        if (carteiraDigitalId == null
+                || !validarQuantidadeCreditos(quantidade)
+                || eventoId == null) {
+            return false;
+        }
+
+        Evento evento = Evento.localizarEvento(eventoId);
+
+        if (evento == null || !evento.permiteAdicionarCreditos()) {
+            return false;
+        }
+
+        atualizarSaldo(quantidade);
+
+        return true;
+    }
+
+    public BigDecimal atualizarSaldo(BigDecimal quantidade) {
+        saldo = saldo.add(quantidade);
+        return saldo;
     }
 }
