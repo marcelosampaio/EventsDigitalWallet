@@ -95,11 +95,6 @@ public class CarteiraDigital {
         return true;
     }
 
-    public BigDecimal atualizarSaldo(BigDecimal quantidade) {
-        saldo = saldo.add(quantidade);
-        return saldo;
-    }
-
     public BigDecimal consultarSaldo() {
         return saldo;
     }
@@ -107,5 +102,47 @@ public class CarteiraDigital {
     public Boolean possuiCreditosDisponiveis() {
         return saldo != null
                 && saldo.compareTo(BigDecimal.ZERO) > 0;
+    }
+
+    public Boolean possuiSaldoSuficiente(BigDecimal valor) {
+        return validarQuantidadeCreditos(valor)
+                && saldo != null
+                && saldo.compareTo(valor) >= 0;
+    }
+
+    public Boolean descontarCreditos(BigDecimal valor) {
+
+        if (carteiraDigitalId == null
+                || !possuiSaldoSuficiente(valor)
+                || eventoId == null) {
+            return false;
+        }
+
+        Evento evento = Evento.localizarEvento(eventoId);
+
+        if (evento == null || !evento.permiteRegistrarConsumo()) {
+            return false;
+        }
+
+        atualizarSaldo(valor.negate());
+
+        return true;
+    }
+
+    public BigDecimal atualizarSaldo(BigDecimal quantidade) {
+
+        if (quantidade == null || saldo == null) {
+            return saldo;
+        }
+
+        BigDecimal novoSaldo = saldo.add(quantidade);
+
+        if (novoSaldo.compareTo(BigDecimal.ZERO) < 0) {
+            return saldo;
+        }
+
+        saldo = novoSaldo;
+
+        return saldo;
     }
 }
