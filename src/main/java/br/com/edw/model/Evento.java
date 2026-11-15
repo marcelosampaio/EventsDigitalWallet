@@ -65,4 +65,11 @@ public class Evento {
     public Boolean permiteRegistrarConsumo() {
         return !encerrado;
     }
+
+    public static Evento localizarEvento(Integer eventoId) {
+        return eventos.stream()
+                .filter(evento -> evento.eventoId.equals(eventoId))
+                .findFirst()
+                .orElse(null);
+    }
 }
