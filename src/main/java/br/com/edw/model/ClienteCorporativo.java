@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClienteCorporativo {
-
     private static final List<ClienteCorporativo> clientes = new ArrayList<>();
     private static Integer proximoId = 1;
 
